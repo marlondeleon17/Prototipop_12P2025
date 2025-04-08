@@ -1,0 +1,41 @@
+commit 2c0cc313aa4ca6314e126d2dba748651985296c0
+Author: marlon de leon <mdeleong17@miumg.edu.gt>
+Date:   Tue Apr 8 10:58:01 2025 -0600
+
+    actualizacion 2
+
+commit d121bc61dc231ff9f106d19587e1061ff71d5841
+Author: marlon de leon <mdeleong17@miumg.edu.gt>
+Date:   Tue Apr 8 10:54:13 2025 -0600
+
+    actualizacion
+
+commit 636bc4e6d8110cbe33bd470b0985ec26961c860e
+Author: marlon de leon <mdeleong17@miumg.edu.gt>
+Date:   Tue Apr 8 10:37:41 2025 -0600
+
+    busca minas
+
+commit ba1fa33daff319f7491370e03d605ee2a2ec0fcc
+Author: marlon de leon <mdeleong17@miumg.edu.gt>
+Date:   Tue Apr 8 10:34:55 2025 -0600
+
+    busca minas
+
+commit bfccb86d333330f319d57f49082fb36d6b8911b3
+Author: marlon de leon <mdeleong17@miumg.edu.gt>
+Date:   Tue Apr 8 10:15:45 2025 -0600
+
+    sube la bitacora
+
+commit bcb53d8d6695f646aa7c2b9d8525487053a36ece
+Author: marlon de leon <mdeleong17@miumg.edu.gt>
+Date:   Tue Apr 8 10:15:03 2025 -0600
+
+    examen segundo parcial seri IV
+
+commit e35d9b052e298caa68573ca97e41ca6976b9eb83
+Author: marlondeleon17 <100364159+marlondeleon17@users.noreply.github.com>
+Date:   Tue Apr 8 10:13:51 2025 -0600
+
+    Initial commit
