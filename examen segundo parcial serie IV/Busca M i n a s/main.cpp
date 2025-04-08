@@ -47,9 +47,9 @@ void mostrarConfiguracionMenu() {
 
 // Función principal del programa
 int main() {
-    string jugador; // Variable para almacenar el nombre del jugador
+    string jugadore; // Variable para almacenar el nombre del jugador
     cout << "Ingrese su nombre: ";
-    cin >> jugador; // Solicita al usuario su nombre
+    cin >> jugadore; // Solicita al usuario su nombre
 
     int opcion = 0; // Variable para almacenar la opción seleccionada por el usuario
     Configuracion config(6, 6, 5, 3, 1); // Configuración predeterminada del juego

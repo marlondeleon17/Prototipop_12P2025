@@ -67,7 +67,7 @@
 	"Juego.h"
 	<iostream>
 
-1743700796 source:c:\users\marlo\onedrive\documentos\2025\progra\prototipop_12p2025\examen segundo parcial serie iv\busca m i n a s\main.cpp
+1744130750 source:c:\users\marlo\onedrive\documentos\2025\progra\prototipop_12p2025\examen segundo parcial serie iv\busca m i n a s\main.cpp
 	"Juego.h"
 	<iostream>
 
@@ -95,4 +95,14 @@
 	"Juego.h"
 	<iostream>
 	<chrono>
+
+1743979829 source:c:\users\marlo\onedrive\documentos\2025\progra\prototipop_12p2025\examen segundo parcial serie iv\busca m i n a s\src\tablero.cpp
+	"Tablero.h"
+	<cstdlib>
+	<ctime>
+
+1744130148 source:c:\users\marlo\onedrive\documentos\2025\progra\prototipop_12p2025\examen segundo parcial serie iv\busca m i n a s\src\jugador.cpp
+	"jugador.h"
+
+1744130782 c:\users\marlo\onedrive\documentos\2025\progra\prototipop_12p2025\examen segundo parcial serie iv\busca m i n a s\include\jugador.h
 

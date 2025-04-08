@@ -37,11 +37,13 @@
 		<Unit filename="include/Configuracion.h" />
 		<Unit filename="include/celda.h" />
 		<Unit filename="include/juego.h" />
+		<Unit filename="include/jugador.h" />
 		<Unit filename="include/tablero.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/Configuracion.cpp" />
 		<Unit filename="src/celda.cpp" />
 		<Unit filename="src/juego.cpp" />
+		<Unit filename="src/jugador.cpp" />
 		<Unit filename="src/tablero.cpp" />
 		<Extensions />
 	</Project>
