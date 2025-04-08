@@ -1,0 +1,453 @@
+main.cpp
+#include "Juego.h"
+#include <iostream>
+
+using namespace std;
+
+// Función para mostrar el menú principal
+// Presenta las opciones disponibles al usuario para modificar la configuración, jugar o salir.
+void mostrarMenu() {
+    cout << "\n--- MENU ----------------\n";
+    cout << "1. Modificar configuración\n";
+    cout << "2. Jugar directamente\n";
+    cout << "3. Salir\n";
+    cout << "Elija una opcion: ";
+}
+
+// Función para mostrar el menú de configuración
+// Permite al usuario ingresar los parámetros del juego, como filas, columnas, minas, vidas y modo de juego.
+void mostrarConfiguracionMenu() {
+    cout << "\n----------- CONFIGURACION -------------\n";
+    cout << "Ingrese el numero de filas (maximo 40): ";
+    int filas;
+    cin >> filas; // Solicita al usuario el número de filas
+    if (filas > 40) filas = 40; // Limita el número de filas a 40
+
+    cout << "Ingrese el numero de columnas (maximo 40): ";
+    int columnas;
+    cin >> columnas; // Solicita al usuario el número de columnas
+    if (columnas > 40) columnas = 40; // Limita el número de columnas a 40
+
+    cout << "Ingrese el numero de minas: ";
+    int minas;
+    cin >> minas; // Solicita al usuario el número de minas
+
+    cout << "Ingrese el numero de vidas: ";
+    int vidas;
+    cin >> vidas; // Solicita al usuario el número de vidas
+
+    int modo;
+    cout << "Modo de juego (1: Jugador, 0: Administrador): ";
+    cin >> modo; // Solicita al usuario el modo de juego
+
+    // Configuración con los nuevos valores
+    Configuracion config(filas, columnas, minas, vidas, modo); // Crea un objeto de configuración con los valores ingresados
+    Juego juego(config); // Crea un objeto de juego con la configuración
+    juego.iniciar(); // Inicia el juego
+}
+
+// Función principal del programa
+int main() {
+    string jugador; // Variable para almacenar el nombre del jugador
+    cout << "Ingrese su nombre: ";
+    cin >> jugador; // Solicita al usuario su nombre
+
+    int opcion = 0; // Variable para almacenar la opción seleccionada por el usuario
+    Configuracion config(6, 6, 5, 3, 1); // Configuración predeterminada del juego
+
+    // Bucle principal que muestra el menú y gestiona las opciones seleccionadas
+    do {
+        mostrarMenu(); // Muestra el menú principal
+        cin >> opcion; // Lee la opción seleccionada por el usuario
+
+        switch (opcion) {
+        case 1: {
+            mostrarConfiguracionMenu(); // Muestra el menú de configuración
+            break;
+        }
+        case 2: {
+            Juego juego(config); // Crea un objeto de juego con la configuración actual
+            juego.iniciar(); // Inicia el juego
+            break;
+        }
+        case 3:
+            cout << "Gracias por jugar, ¡hasta la proxima!\n"; // Mensaje de despedida
+            break;
+        default:
+            cout << "Opción no válida, por favor elija una opcion entre 1 y 3.\n"; // Mensaje de error para opciones no válidas
+            break;
+        }
+    } while (opcion != 3); // Continúa mostrando el menú hasta que el usuario elija salir
+
+    return 0; // Finaliza el programa
+}
+
+
+
+
+celda.h
+
+#ifndef CELDA_H
+#define CELDA_H
+
+// Clase Celda
+// Esta clase representa una celda en el tablero del juego.
+// Cada celda puede contener una mina y puede ser descubierta o no.
+class Celda {
+public:
+    // Atributos públicos de la clase
+    bool mina;         // Indica si la celda contiene una mina (true) o no (false)
+    bool descubierta;  // Indica si la celda ha sido descubierta (true) o no (false)
+
+    // Constructor de la clase Celda
+    // Inicializa una nueva celda con los siguientes valores:
+    // - mina: false (indica que la celda no contiene una mina)
+    // - descubierta: false (indica que la celda no ha sido descubierta)
+    Celda();
+};
+
+#endif // CELDA_H
+
+
+
+celda.cpp 
+#include "Celda.h"
+
+// Constructor de la clase Celda
+// Inicializa una nueva celda con los siguientes valores:
+// - mina: false (indica que la celda no contiene una mina)
+// - descubierta: false (indica que la celda no ha sido descubierta)
+Celda::Celda() : mina(false), descubierta(false) {}
+
+
+tablero.cpp
+#include "Tablero.h"
+#include <cstdlib>
+#include <ctime>
+
+// Constructor de la clase Tablero
+// Inicializa un tablero con el número de filas y columnas especificadas.
+// Parámetros:
+// - f: número de filas del tablero
+// - c: número de columnas del tablero
+Tablero::Tablero(int f, int c) : filas(f), columnas(c) {
+    // Redimensiona el vector de celdas para que tenga el tamaño adecuado
+    this->celdas.resize(this->filas, vector<Celda>(this->columnas));
+}
+
+// Método para colocar minas en el tablero
+// Coloca un número específico de minas en posiciones aleatorias del tablero.
+// Parámetro:
+// - minas: número de minas a colocar en el tablero
+void Tablero::colocarMinas(int minas) {
+    srand(time(0)); // Inicializa la semilla para la generación de números aleatorios
+    int colocadas = 0; // Contador de minas colocadas
+    while (colocadas < minas) {
+        int fila = rand() % this->filas; // Genera una fila aleatoria
+        int col = rand() % this->columnas; // Genera una columna aleatoria
+        // Si la celda seleccionada no tiene una mina, se coloca una mina
+        if (!this->celdas[fila][col].mina) {
+            this->celdas[fila][col].mina = true; // Coloca la mina
+            colocadas++; // Incrementa el contador de minas colocadas
+        }
+    }
+}
+
+// Método para mostrar el estado del tablero
+// Muestra el tablero en la consola, revelando celdas según el modo de juego.
+// Parámetro:
+// - administrador: booleano que indica si se debe mostrar el tablero completo (true) o solo las celdas descubiertas (false)
+void Tablero::mostrar(bool administrador) {
+    cout << "\n    "; // Espacio para la numeración de columnas
+    for (int j = 1; j <= this->columnas; j++) cout << j << " "; // Muestra los números de las columnas
+    cout << "\n   ";
+    for (int j = 0; j < this->columnas; j++) cout << "--"; // Dibuja una línea divisoria
+    cout << "\n";
+    for (int i = 0; i < this->filas; i++) {
+        cout << i + 1 << " | "; // Muestra el número de la fila
+        for (int j = 0; j < this->columnas; j++) {
+            // Si es modo administrador y hay una mina, muestra un asterisco
+            if (administrador && this->celdas[i][j].mina)
+                cout << "* ";
+            else
+                // Muestra el estado de la celda: descubierta o no
+                cout << (this->celdas[i][j].descubierta ? (this->celdas[i][j].mina ? "*" : "O") : "?") << " ";
+        }
+        cout << "|" << endl; // Cierra la fila
+    }
+}
+
+// Método para descubrir una celda en el tablero
+// Intenta descubrir la celda en la posición especificada.
+// Parámetros:
+// - fila: número de fila de la celda a descubrir (1-indexado)
+// - col: número de columna de la celda a descubrir (1-indexado)
+// Retorna:
+// - true si se descubre una mina, false si la celda no tiene mina
+bool Tablero::descubrir(int fila, int col) {
+    // Verifica si las coordenadas están dentro de los límites del tablero
+    if (fila < 1 || fila > this->filas || col < 1 || col > this->columnas) return false;
+    // Verifica si la celda tiene una mina
+    if (this->celdas[fila - 1][col - 1].mina) return true; // Retorna true si hay mina
+    this->celdas[fila - 1][col - 1].descubierta = true; // Marca la celda como descubierta
+    return false; // Retorna false si no hay mina
+}
+
+
+
+configuración.h
+
+#include "Tablero.h"
+#include <cstdlib>
+#include <ctime>
+
+// Constructor de la clase Tablero
+// Inicializa un tablero con el número de filas y columnas especificadas.
+// Parámetros:
+// - f: número de filas del tablero
+// - c: número de columnas del tablero
+Tablero::Tablero(int f, int c) : filas(f), columnas(c) {
+    // Redimensiona el vector de celdas para que tenga el tamaño adecuado
+    this->celdas.resize(this->filas, vector<Celda>(this->columnas));
+}
+
+// Método para colocar minas en el tablero
+// Coloca un número específico de minas en posiciones aleatorias del tablero.
+// Parámetro:
+// - minas: número de minas a colocar en el tablero
+void Tablero::colocarMinas(int minas) {
+    srand(time(0)); // Inicializa la semilla para la generación de números aleatorios
+    int colocadas = 0; // Contador de minas colocadas
+    while (colocadas < minas) {
+        int fila = rand() % this->filas; // Genera una fila aleatoria
+        int col = rand() % this->columnas; // Genera una columna aleatoria
+        // Si la celda seleccionada no tiene una mina, se coloca una mina
+        if (!this->celdas[fila][col].mina) {
+            this->celdas[fila][col].mina = true; // Coloca la mina
+            colocadas++; // Incrementa el contador de minas colocadas
+        }
+    }
+}
+
+// Método para mostrar el estado del tablero
+// Muestra el tablero en la consola, revelando celdas según el modo de juego.
+// Parámetro:
+// - administrador: booleano que indica si se debe mostrar el tablero completo (true) o solo las celdas descubiertas (false)
+void Tablero::mostrar(bool administrador) {
+    cout << "\n    "; // Espacio para la numeración de columnas
+    for (int j = 1; j <= this->columnas; j++) cout << j << " "; // Muestra los números de las columnas
+    cout << "\n   ";
+    for (int j = 0; j < this->columnas; j++) cout << "--"; // Dibuja una línea divisoria
+    cout << "\n";
+    for (int i = 0; i < this->filas; i++) {
+        cout << i + 1 << " | "; // Muestra el número de la fila
+        for (int j = 0; j < this->columnas; j++) {
+            // Si es modo administrador y hay una mina, muestra un asterisco
+            if (administrador && this->celdas[i][j].mina)
+                cout << "* ";
+            else
+                // Muestra el estado de la celda: descubierta o no
+                cout << (this->celdas[i][j].descubierta ? (this->celdas[i][j].mina ? "*" : "O") : "?") << " ";
+        }
+        cout << "|" << endl; // Cierra la fila
+    }
+}
+
+// Método para descubrir una celda en el tablero
+// Intenta descubrir la celda en la posición especificada.
+// Parámetros:
+// - fila: número de fila de la celda a descubrir (1-indexado)
+// - col: número de columna de la celda a descubrir (1-indexado)
+// Retorna:
+// - true si se descubre una mina, false si la celda no tiene mina
+bool Tablero::descubrir(int fila, int col) {
+    // Verifica si las coordenadas están dentro de los límites del tablero
+    if (fila < 1 || fila > this->filas || col < 1 || col > this->columnas) return false;
+    // Verifica si la celda tiene una mina
+    if (this->celdas[fila - 1][col - 1].mina) return true; // Retorna true si hay mina
+    this->celdas[fila - 1][col - 1].descubierta = true; // Marca la celda como descubierta
+    return false; // Retorna false si no hay mina
+}
+
+
+tablero.h
+#ifndef TABLERO_H
+#define TABLERO_H
+
+#include <vector>
+#include <iostream>
+#include "Celda.h"
+
+using namespace std;
+
+// Clase Tablero
+// Esta clase representa el tablero del juego, que consiste en una matriz de celdas.
+// Proporciona métodos para colocar minas, mostrar el estado del tablero y descubrir celdas.
+class Tablero {
+private:
+    vector<vector<Celda>> celdas; // Matriz de celdas que componen el tablero
+    int filas;                     // Número de filas del tablero
+    int columnas;                  // Número de columnas del tablero
+
+public:
+    // Constructor de la clase Tablero
+    // Inicializa un tablero con el número de filas y columnas especificadas.
+    // Parámetros:
+    // - f: número de filas del tablero
+    // - c: número de columnas del tablero
+    Tablero(int f, int c);
+
+    // Método para colocar minas en el tablero
+    // Coloca un número específico de minas en posiciones aleatorias del tablero.
+    // Parámetro:
+    // - minas: número de minas a colocar en el tablero
+    void colocarMinas(int minas);
+
+    // Método para mostrar el estado del tablero
+    // Muestra el tablero en la consola, revelando celdas según el modo de juego.
+    // Parámetro:
+    // - administrador: booleano que indica si se debe mostrar el tablero completo (true) o solo las celdas descubiertas (false)
+    void mostrar(bool administrador);
+
+    // Método para descubrir una celda en el tablero
+    // Intenta descubrir la celda en la posición especificada.
+    // Parámetros:
+    // - fila: número de fila de la celda a descubrir (1-indexado)
+    // - col: número de columna de la celda a descubrir (1-indexado)
+    // Retorna:
+    // - true si se descubre una mina, false si la celda no tiene mina
+    bool descubrir(int fila, int col);
+};
+
+#endif // TABLERO_H
+
+
+
+configuración.cpp
+
+#include "Configuracion.h"
+
+// Constructor de la clase Configuracion
+// Inicializa los atributos de la configuración del juego.
+// Parámetros:
+// - f: número de filas del tablero
+// - c: número de columnas del tablero
+// - m: número de minas en el tablero
+// - v: número de vidas del jugador
+// - modo: modo de juego (puede ser un valor que indique diferentes configuraciones de juego)
+Configuracion::Configuracion(int f, int c, int m, int v, int modo)
+    : filas(f), columnas(c), minas(m), vidas(v), modo(modo), victorias(0), derrotas(0) {}
+
+// Incrementa el contador de victorias en 1
+void Configuracion::aumentarVictoria() {
+    this->victorias++;
+}
+
+// Incrementa el contador de derrotas en 1
+void Configuracion::aumentarDerrota() {
+    this->derrotas++;
+}
+
+
+
+
+juego.h
+#include "Configuracion.h"
+#include <chrono>
+
+// Clase Juego
+// Esta clase gestiona la lógica del juego, incluyendo la interacción con el tablero
+// y la configuración del juego. Permite iniciar el juego y manejar el flujo de la partida.
+class Juego {
+private:
+    Tablero tablero;                          // Objeto que representa el tablero del juego
+    Configuracion& config;                    // Referencia a la configuración del juego
+    std::chrono::steady_clock::time_point inicio; // Marca de tiempo para registrar el inicio del juego
+
+public:
+    // Constructor de la clase Juego
+    // Inicializa el juego con la configuración proporcionada.
+    // Parámetro:
+    // - cfg: referencia a un objeto de tipo Configuracion que contiene los parámetros del juego.
+    Juego(Configuracion& cfg);
+
+    // Método para iniciar el juego
+    // Coloca las minas en el tablero y comienza la partida.
+    void iniciar();
+
+    // Método para gestionar la lógica del juego
+    // Permite al jugador descubrir celdas en el tablero y maneja la lógica de ganar o perder.
+    void jugar();
+};
+
+#endif // JUEGO_H
+
+
+
+juego.cpp
+#include "Juego.h"
+#include <iostream>
+#include <chrono>
+
+using namespace std;
+
+// Constructor de la clase Juego
+// Inicializa el juego con la configuración proporcionada y crea un tablero
+// basado en el número de filas y columnas especificadas en la configuración.
+// Parámetro:
+// - cfg: referencia a un objeto de tipo Configuracion que contiene los parámetros del juego.
+Juego::Juego(Configuracion& cfg) : config(cfg), tablero(cfg.filas, cfg.columnas) {}
+
+// Método para iniciar el juego
+// Coloca las minas en el tablero y registra el tiempo de inicio del juego.
+// Luego, llama al método jugar() para comenzar la partida.
+void Juego::iniciar() {
+    this->tablero.colocarMinas(this->config.minas); // Coloca las minas en el tablero
+    this->inicio = chrono::steady_clock::now();    // Registra el tiempo de inicio
+    this->jugar();                                  // Inicia el bucle de juego
+}
+
+// Método para gestionar la lógica del juego
+// Permite al jugador descubrir celdas en el tablero hasta que se agoten las vidas.
+// Muestra el estado del tablero y las vidas restantes, y maneja la lógica de perder o ganar.
+void Juego::jugar() {
+    int fila, columna;         // Variables para almacenar la fila y columna ingresadas por el jugador
+    bool perdio = false;       // Bandera para indicar si el jugador ha perdido
+
+    // Bucle principal del juego que se ejecuta mientras el jugador tenga vidas
+    while (this->config.vidas > 0) {
+        this->tablero.mostrar(this->config.modo == 0); // Muestra el tablero, mostrando minas si es modo administrador
+        cout << "\nVidas restantes: " << this->config.vidas << "\nFila y columna: ";
+        cin >> fila >> columna; // Solicita al jugador que ingrese la fila y columna
+
+        // Intenta descubrir la celda en la posición especificada
+        if (this->tablero.descubrir(fila, columna)) {
+            cout << "\n¡Mina! Pierdes una vida.\n"; // Mensaje si se descubre una mina
+            this->config.vidas--; // Decrementa el contador de vidas
+        }
+
+        // Verifica si el jugador ha perdido todas sus vidas
+        if (this->config.vidas == 0) {
+            cout << "¡Perdiste! Has agotado tus vidas.\n";
+            this->config.aumentarDerrota(); // Incrementa el contador de derrotas
+            perdio = true; // Marca que el jugador ha perdido
+            break; // Sale del bucle
+        }
+    }
+
+    // Si el jugador no ha perdido, se considera que ha ganado
+    if (!perdio) {
+        cout << "¡Felicidades, has ganado!\n";
+        this->config.aumentarVictoria(); // Incrementa el contador de victorias
+    }
+
+    // Muestra el número de victorias y derrotas
+    cout << "Victorias: " << this->config.victorias << " | Derrotas: " << this->config.derrotas << endl;
+
+    // Mostrar tiempo jugado
+    auto fin = chrono::steady_clock::now(); // Registra el tiempo al finalizar el juego
+    auto duracion = chrono::duration_cast<chrono::seconds>(fin - this->inicio); // Calcula la duración del juego
+    cout << "Tiempo jugado: " << duracion.count() << " segundos.\n"; // Muestra el tiempo jugado
+}
+
+
